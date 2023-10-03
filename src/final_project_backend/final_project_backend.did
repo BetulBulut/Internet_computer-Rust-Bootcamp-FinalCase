@@ -1,0 +1,36 @@
+type Listing =
+        record{
+            description:text;
+            items: vec item;
+            is_active: bool;
+            owner: principal;
+        };
+type item =
+        record{
+            name:text;
+            new_owner:principal;
+            last_bid:nat64;
+        };
+
+type Result =
+    variant{
+        Ok;
+        Err: BidError;
+    };
+
+type BidError =
+    variant{
+        ListIsNotActive;
+        NoSuchItem;
+        AccessRejected;
+        UpdateError;
+    };
+
+service: {
+    "get_listing": (nat64) -> (opt Listing) query;
+    "get_listing_count": () -> (nat64) query;
+    "create_listing":(nat64 ,Listing) -> (opt Listing);
+    "edit_listing": (nat64 ,Listing) ->Result;
+    "end_listing": (nat64) -> Result;
+    "Bid": (nat64, item,nat64) -> Result;
+}
